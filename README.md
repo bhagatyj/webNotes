@@ -1,0 +1,2 @@
+# webNotes
+Static Notes generator
