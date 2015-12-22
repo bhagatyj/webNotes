@@ -1,30 +1,20 @@
 #!/usr/bin/python
-from flask import Flask
-import flask
 import time
 import subprocess
 import os
-import requests
-import subprocess
 from os import listdir
 from os.path import isfile, join, isdir
 
 # __file__ refers to the file settings.py 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + '/'  # refers to application_top
 HOST_DIR = os.getenv('HOME') + '/website/'
-BASE_DIR = os.getenv('HOME') + '/Dropbox/'
+BASE_DIR = os.getenv('HOME') + '/source/'
 CSS_DIR = BASE_DIR + 'Sites/bootstrap' 
 IMG_DIR = BASE_DIR + 'Sites/images' 
 MARKDOWN = BASE_DIR + 'Markdown.pl'
 
 HOME_PAGE_HEADER = ""
 HOME_PAGE_TRAILER = ""
-
-app = Flask(__name__, static_url_path='')
-
-@app.route('/')
-def index():
-    return flask.send_from_directory(HOST_DIR + 'pages/', 'index.html')
 
 def translateMdFileToHtml( mdFile, outFileName ):
     tmpFileName = outFileName + ".tmp"
@@ -220,49 +210,12 @@ def createHomePage():
        lines = createHtmlDivOfFiles(files)
        homePage.write(lines)
        homePage.write(HOME_PAGE_TRAILER)
-"""
-Decorator used for adding standard set of headers to the responses.
-"""
-def allowAccessControl(f):
-    def wrap(*args, **kwargs):
-        resp = f(*args, **kwargs)
-        resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
-        resp.headers['Access-Control-Allow-Credentials'] = 'true'
-        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
-        return resp
 
-    return wrap
-
-@allowAccessControl
-@app.route('/findMdFiles/<dirname>')
-def findMdFiles( dirname ):
-    resp = flask.jsonify( findMdFilesInternal )
-    return resp
-
-@allowAccessControl
-@app.route('/getMdFile/<dirname>')
-def getMdFile(dirname):
-    resp = app.send_static_file("/Users/byj/Dropbox/dailyLog.yj.html")
-    return resp
-
-@allowAccessControl
-@app.route('/path/<path:path>')
-def static_proxy(path):
-    if path.endswith(".html"):
-        resp = flask.send_from_directory(HOST_DIR + 'pages/', path)
-    else:
-        resp = flask.send_from_directory(HOST_DIR, path)
-    return resp
-
-@allowAccessControl
-@app.route('/gitcal')
-def getGitCal():
-    data = requests.get(('https://github.com/users/bhagatyj/contributions'))
-    resp = flask.Response(data.content)
-    return resp
 
 def cleanup():
     pass
+
+def parseConfig():
 
 def init():
     DirsToCopy = ( CSS_DIR, IMG_DIR )
@@ -273,12 +226,7 @@ def init():
     createHomePage()
    
 
-@app.route('/init')
-def initAndReturnIndex():
-    init()
-    return "Init Complete..."
 
 if __name__ == '__main__':
     cleanup()
     init()
-    app.run(debug=True)
