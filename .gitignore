@@ -109,3 +109,5 @@ fabric.properties
 
 # Test FIles
 data/dst/index.html
+data/dst/pages/*.html
+data/dst/pages/*.ymd
