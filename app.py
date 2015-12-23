@@ -5,13 +5,17 @@ import os
 from os import listdir
 from os.path import isfile, join, isdir
 
-# __file__ refers to the file settings.py 
+# __file__ refers to the file settings.py
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + '/'  # refers to application_top
-HOST_DIR = os.getenv('HOME') + '/website/'
-BASE_DIR = os.getenv('HOME') + '/source/'
-CSS_DIR = BASE_DIR + 'Sites/bootstrap' 
-IMG_DIR = BASE_DIR + 'Sites/images' 
-MARKDOWN = BASE_DIR + 'Markdown.pl'
+SUPPORT_PATH = APP_ROOT + 'support/'
+HTML_PATH = SUPPORT_PATH + 'html/'
+DATA_PATH = APP_ROOT + 'data/'
+HOST_DIR = DATA_PATH + 'dst/'
+BASE_DIR = DATA_PATH + 'source/'
+
+CSS_DIR = SUPPORT_PATH + 'css'
+
+MARKDOWN = APP_ROOT + 'Markdown.pl'
 
 HOME_PAGE_HEADER = ""
 HOME_PAGE_TRAILER = ""
@@ -20,8 +24,8 @@ def translateMdFileToHtml( mdFile, outFileName ):
     tmpFileName = outFileName + ".tmp"
     tmpFile = open(outFileName + ".tmp" , "w")
     inFile = open( mdFile, 'r' )
-        
-    p = subprocess.Popen(MARKDOWN, 
+
+    p = subprocess.Popen(MARKDOWN,
               shell=True, stdout=tmpFile, stdin=inFile)
     p.wait()
     tmpFile.close()
@@ -73,10 +77,10 @@ def findMdFilesInternal( dirname ):
     mySet["mdFiles"] = httpLinks
     return mySet
 
-""" 
+"""
 Each Node represents a directory and could contain sub-directories and
 files. A node also has a complete pathname, class and other meta data
-associated with it. This meta data is useful for expanding/collapsing 
+associated with it. This meta data is useful for expanding/collapsing
 the node in the html rendering.
 """
 class Node:
@@ -107,7 +111,7 @@ class Node:
         subClasses = ""
         names = self.fullName.split("/")[1:]
         # Take the name, split it and add subclasses ending with ___.
-        # If name is a/b/c, the subclasses will be 
+        # If name is a/b/c, the subclasses will be
         # ___a___ ___a___b___ ___a___b___c___
         # These are used for collapsing
         for i in range(1, len(names) + 1):
@@ -148,12 +152,12 @@ def formRecursiveDict( names, separator='___' ):
             else:
                 subNode = subNode.dirs[nodeName]
     return dictRoot
-    
+
 """
 This function takes the hierarchical Node structure and forms html
 elements that are used to provide the navigation panel
 """
-def pretty_items(htmlText, inpData, nametag="<strong>%s </strong>", 
+def pretty_items(htmlText, inpData, nametag="<strong>%s </strong>",
              itemtag="<li  id='%s' onclick='%s' class='%s' >%s</li>",
              itemtagCollapse="<li  id='%s' onclick='%s' class='%s collapse'>%s</li>",
              valuetag="  %s", blocktag=('<ul>', '</ul>')):
@@ -200,10 +204,10 @@ to a navigation section and creating the home page.
 def createHomePage():
    files = findMdFilesInternal( '' )[ 'mdFiles' ]
    files.sort()
-   htmlFile = HOST_DIR + 'pages/' + '/index.html'
-   with open(APP_ROOT + "home_page_header.html") as f: 
+   htmlFile = DATA_PATH + 'dst/index.html'
+   with open(HTML_PATH + "home_page_header.html") as f:
        HOME_PAGE_HEADER = "".join( f.readlines() )
-   with open(APP_ROOT + "home_page_trailer.html") as f: 
+   with open(HTML_PATH + "home_page_trailer.html") as f:
        HOME_PAGE_TRAILER = "".join( f.readlines() )
    with open( htmlFile, 'w' ) as homePage:
        homePage.write(HOME_PAGE_HEADER)
@@ -216,15 +220,10 @@ def cleanup():
     pass
 
 def parseConfig():
+    pass
 
 def init():
-    DirsToCopy = ( CSS_DIR, IMG_DIR )
-    for dir in DirsToCopy:
-        command = "cp -r " + dir + ' ' + HOST_DIR
-        p = subprocess.Popen(command, shell=True)
-        p.wait()
     createHomePage()
-   
 
 
 if __name__ == '__main__':

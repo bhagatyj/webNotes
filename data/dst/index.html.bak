@@ -159,16 +159,7 @@ $(document).ready(function() {
 </ul>
 </div>
 <div id=leftBar>
-<ul>
-<li  id='___root___samayal' onclick='collapse(this)' class='___root___ ___root collapse'><strong>samayal </strong></li>
-<ul>
-<li  id='samayal___milagu_rasam' onclick='changeContent(this)' class='___root___ ___root___samayal___ ___root___samayal collapse'>milagu_rasam</li>
-</ul>
-<li  id='___root___lists' onclick='collapse(this)' class='___root___ ___root collapse'><strong>lists </strong></li>
-<ul>
-<li  id='lists___books' onclick='changeContent(this)' class='___root___ ___root___lists___ ___root___lists collapse'>books</li>
-</ul>
-</ul><br></p>
+<br></p>
 </div>
 <div id=content class='top'>
  
