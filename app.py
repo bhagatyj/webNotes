@@ -2,6 +2,7 @@
 import time
 import subprocess
 import os
+from configParser import Config
 from os import listdir
 from os.path import isfile, join, isdir
 
@@ -54,12 +55,12 @@ def copyFile( src, dst ):
             for line in inFile:
                 outFile.write(line)
 
-def findMdFilesInternal( dirname ):
+def findMdFilesInternal( dirname, cfg ):
     MdFileList = list()
     myPath = BASE_DIR + dirname
     for root, dirs, files in os.walk( myPath ):
         for name in files:
-            if name.endswith('.yj.md'):
+            if name.endswith(cfg.extn):
                 MdFileList.append( os.path.join( root, name ) )
 
     httpLinks = list()
@@ -201,8 +202,8 @@ CreateHomePage does all the work of finding all the MD files
 converting them. Forming a Node Hierarchy, converting that
 to a navigation section and creating the home page.
 """
-def createHomePage():
-   files = findMdFilesInternal( '' )[ 'mdFiles' ]
+def createHomePage(cfg):
+   files = findMdFilesInternal( '', cfg )[ 'mdFiles' ]
    files.sort()
    htmlFile = DATA_PATH + 'dst/index.html'
    with open(HTML_PATH + "home_page_header.html") as f:
@@ -223,7 +224,8 @@ def parseConfig():
     pass
 
 def init():
-    createHomePage()
+    cfg = Config(".config")
+    createHomePage(cfg)
 
 
 if __name__ == '__main__':
